@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
     // Declare instance variables here
 
@@ -30,12 +30,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         messageTableView.dataSource = self
         
         
-        //TODO: Set yourself as the delegate of the text field here:
-
+        // Set yourself as the delegate of the text field here:
+        messageTextfield.delegate = self
         
-        
-        //TODO: Set the tapGesture here:
-        
+        // Set the tapGesture here:
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
+        messageTableView.addGestureRecognizer(tapGesture)
         
 
         // Register your MessageCell.xib file here:
@@ -68,8 +68,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    //TODO: Declare tableViewTapped here:
-    
+    // Declare tableViewTapped here:
+    @objc func tableViewTapped() {
+        messageTextfield.endEditing(true)
+    }
     
     
     // Declare configureTableView here:
@@ -83,18 +85,22 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //MARK:- TextField Delegate Methods
     
+    // Declare textFieldDidBeginEditing here:
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        UIView.animate(withDuration: 0.1) {
+            self.heightConstraint.constant = 308 //258 (keyboard height) + 50 (compose view height)
+            self.view.layoutIfNeeded()
+        }
+    }
     
+    // Declare textFieldDidEndEditing here:
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        UIView.animate(withDuration: 0.5) {
+            self.heightConstraint.constant = 50 // compose view height
+            self.view.layoutIfNeeded()
+        }
+    }
 
-    
-    //TODO: Declare textFieldDidBeginEditing here:
-    
-    
-    
-    
-    //TODO: Declare textFieldDidEndEditing here:
-    
-
-    
     ///////////////////////////////////////////
     
     
