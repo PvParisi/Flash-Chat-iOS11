@@ -19,16 +19,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet var sendButton: UIButton!
     @IBOutlet var messageTextfield: UITextField!
     @IBOutlet var messageTableView: UITableView!
-    
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Set yourself as the delegate and datasource here:
         messageTableView.delegate = self
         messageTableView.dataSource = self
-        
         
         // Set yourself as the delegate of the text field here:
         messageTextfield.delegate = self
@@ -37,7 +34,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
         messageTableView.addGestureRecognizer(tapGesture)
         
-
         // Register your MessageCell.xib file here:
         messageTableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "customMessageCell")
         
@@ -48,9 +44,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     ///////////////////////////////////////////
     
     //MARK: - TableView DataSource Methods
-    
-    
-    
+
     // Declare cellForRowAtIndexPath here:
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customMessageCell", for: indexPath) as! CustomMessageCell
@@ -62,25 +56,21 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
-    
     // Declare numberOfRowsInSection here:
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messageArray.count
     }
-    
     
     // Declare tableViewTapped here:
     @objc func tableViewTapped() {
         messageTextfield.endEditing(true)
     }
     
-    
     // Declare configureTableView here:
     func configureTableView() {
         messageTableView.rowHeight = UITableViewAutomaticDimension
         messageTableView.estimatedRowHeight = 120.0
     }
-    
     
     ///////////////////////////////////////////
     
@@ -104,13 +94,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     ///////////////////////////////////////////
     
-    
-    //MARK: - Send & Recieve from Firebase
-    
-    
-    
-    
-    
+    //MARK: - Send & Receive from Firebase
+
     @IBAction func sendPressed(_ sender: AnyObject) {
 //         messageTextfield.endEditing(true)
         messageTextfield.isEnabled = false
@@ -155,11 +140,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
 
-    
-    
-    
     @IBAction func logOutPressed(_ sender: AnyObject) {
-        
         // Log out the user and send them back to WelcomeViewController
         do {
             try Auth.auth().signOut()
@@ -167,9 +148,5 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         } catch {
             print("ERROR: problem signing out. \(error)")
         }
-        
     }
-    
-
-
 }
