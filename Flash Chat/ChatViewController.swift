@@ -12,7 +12,7 @@ import Firebase
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
     // Declare instance variables here
-
+    var messageArray : [Message] = [Message]()
     
     // We've pre-linked the IBOutlets
     @IBOutlet var heightConstraint: NSLayoutConstraint!
@@ -42,6 +42,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         messageTableView.register(UINib(nibName: "MessageCell", bundle: nil), forCellReuseIdentifier: "customMessageCell")
         
         configureTableView()
+        retrieveMessages()
     }
 
     ///////////////////////////////////////////
@@ -54,9 +55,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customMessageCell", for: indexPath) as! CustomMessageCell
         
-        let messageArray = ["First message", "Second message", "Third message"]
-        
-        cell.messageBody.text = messageArray[indexPath.row]
+        cell.messageBody.text = messageArray[indexPath.row].messageBody
+        cell.senderUsername.text = messageArray[indexPath.row].sender
+        cell.avatarImageView.image = UIImage(named: "egg")
         
         return cell
     }
@@ -64,7 +65,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // Declare numberOfRowsInSection here:
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return messageArray.count
     }
     
     
@@ -119,8 +120,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         let messageDB = Database.database().reference().child("Messages")
         let messageDictionary = ["Sender" : Auth.auth().currentUser?.email, "MessageBody": messageTextfield.text!]
         
-        messageDB.childByAutoId().setValue(messageDictionary) {
-            (error, reference) in
+        messageDB.childByAutoId().setValue(messageDictionary) { (error, reference) in
             
             if error != nil {
                 print("ERROR: \(error!)")
@@ -133,9 +133,27 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    //TODO: Create the retrieveMessages method here:
+    // Create the retrieveMessages method here:
     
-    
+    func retrieveMessages() {
+        let messageDB = Database.database().reference().child("Messages")
+        
+        messageDB.observe(.childAdded) { (snapshot) in
+            let snapshotValue = snapshot.value as! Dictionary<String,String>
+            
+            let text = snapshotValue["MessageBody"]!
+            let sender = snapshotValue["Sender"]!
+            
+//            print(text, sender)
+            let message = Message()
+            message.messageBody = text
+            message.sender = sender
+            
+            self.messageArray.append(message)
+            self.configureTableView()
+            self.messageTableView.reloadData()
+        }
+    }
 
     
     
